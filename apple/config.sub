@@ -1124,6 +1124,9 @@ case $cpu-$vendor in
 	arm64-*)
 		cpu=aarch64
 		;;
+	arm64_32-*)
+		cpu=aarch64_32
+		;;
 
 	# Recognize the canonical CPU Types that limit and/or modify the
 	# company names they are paired with.
@@ -1175,7 +1178,7 @@ case $cpu-$vendor in
 		case $cpu in
 			1750a | 580 \
 			| a29k \
-			| aarch64 | aarch64_be \
+			| aarch64 | aarch64_be | aarch64_32 \ 
 			| abacus \
 			| alpha | alphaev[4-8] | alphaev56 | alphaev6[78] \
 			| alpha64 | alpha64ev[4-8] | alpha64ev56 | alpha64ev6[78] \

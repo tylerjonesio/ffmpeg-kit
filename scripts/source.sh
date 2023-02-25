@@ -7,9 +7,9 @@
 get_library_source() {
   case $1 in
   config)
-    SOURCE_REPO_URL="https://github.com/arthenica/gnu-config"
-    SOURCE_ID="v20210814"
-    SOURCE_TYPE="TAG"
+    SOURCE_REPO_URL="https://github.com/tylerjonesio/gnu-config"
+    SOURCE_ID="master"
+    SOURCE_TYPE="BRANCH"
     ;;
   chromaprint)
     SOURCE_REPO_URL="https://github.com/arthenica/chromaprint"

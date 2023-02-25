@@ -250,7 +250,7 @@ downloaded_library_sources "${ENABLED_LIBRARIES[@]}"
 TARGET_ARCH_LIST=()
 
 # BUILD ENABLED LIBRARIES ON ENABLED ARCHITECTURES
-for run_arch in {0..12}; do
+for run_arch in {0..14}; do
   if [[ ${ENABLED_ARCHITECTURES[$run_arch]} -eq 1 ]]; then
     export ARCH=$(get_arch_name "$run_arch")
     export FULL_ARCH=$(get_full_arch_name "$run_arch")

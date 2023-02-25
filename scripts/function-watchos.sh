@@ -8,12 +8,14 @@ enable_default_watchos_architectures() {
   ENABLED_ARCHITECTURES[ARCH_ARM64]=1
   ENABLED_ARCHITECTURES[ARCH_X86_64]=1
   ENABLED_ARCHITECTURES[ARCH_ARM64_SIMULATOR]=1
+  ENABLED_ARCHITECTURES[ARCH_ARM64_32]=1
+  ENABLED_ARCHITECTURES[ARCH_ARMV7K]=1
 }
 
 display_help() {
   COMMAND=$(echo "$0" | sed -e 's/\.\///g')
 
-  echo -e "\n'$COMMAND' builds FFmpegKit for watchOS platform. By default three architectures (arm64, arm64-simulator \
+  echo -e "\n'$COMMAND' builds FFmpegKit for watchOS platform. By default three architectures (arm64, arm64-32, armv7k, arm64-simulator \
 and x86-64) are enabled without any external libraries. Options can be used to disable architectures and/or enable \
 external libraries. Please note that GPL libraries (external libraries with GPL license) need --enable-gpl flag to be \
 set explicitly. When compilation ends, libraries are created under the prebuilt folder.\n"
@@ -27,6 +29,8 @@ set explicitly. When compilation ends, libraries are created under the prebuilt 
 
   echo -e "  --disable-arm64\t\tdo not build arm64 architecture [yes]"
   echo -e "  --disable-arm64-simulator\tdo not build arm64-simulator architecture [yes]"
+  echo -e "  --disable-arm64-32\tdo not build arm64-32 architecture [yes]"
+  echo -e "  --disable-armv7k\tdo not build armv7k architecture [yes]"
   echo -e "  --disable-x86-64\t\tdo not build x86-64 architecture [yes]\n"
 
   echo -e "Libraries:"
@@ -75,7 +79,7 @@ get_common_cflags() {
   fi
 
   case ${ARCH} in
-  arm64)
+  arm64 | arm64-32 | armv7k)
     echo "-fstrict-aliasing ${BITCODE_FLAGS} -DWATCHOS ${LTS_BUILD_FLAG}${BUILD_DATE} -isysroot ${SDK_PATH}"
     ;;
   x86-64 | arm64-simulator)
@@ -86,8 +90,14 @@ get_common_cflags() {
 
 get_arch_specific_cflags() {
   case ${ARCH} in
+  armv7k)
+    echo "-arch armv7k -target $(get_target) -march=armv7k -mcpu=generic -mfpu=neon -DFFMPEG_KIT_ARMV7K"
+    ;;
   arm64)
     echo "-arch arm64 -target $(get_target) -march=armv8-a+crc+crypto -mcpu=generic -DFFMPEG_KIT_ARM64"
+    ;;
+  arm64-32)
+    echo "-arch arm64_32 -target $(get_target) -march=armv8-a+crc+crypto -mcpu=generic -DFFMPEG_KIT_ARM64_32"
     ;;
   arm64-simulator)
     echo "-arch arm64 -target $(get_target) -march=armv8-a+crc+crypto -mcpu=generic -DFFMPEG_KIT_ARM64_SIMULATOR"
@@ -102,7 +112,7 @@ get_size_optimization_cflags() {
 
   local ARCH_OPTIMIZATION=""
   case ${ARCH} in
-  arm64)
+  arm64 | arm64-32 | armv7k)
     case $1 in
     x264 | x265)
       ARCH_OPTIMIZATION="-Oz -Wno-ignored-optimization-argument"
@@ -139,7 +149,7 @@ get_size_optimization_asm_cflags() {
   case $1 in
   jpeg | ffmpeg)
     case ${ARCH} in
-    arm64)
+    arm64 | arm64-32 | armv7k)
       ARCH_OPTIMIZATION="-Oz"
       ;;
     x86-64 | arm64-simulator)
@@ -161,7 +171,7 @@ get_app_specific_cflags() {
   case $1 in
   fontconfig)
     case ${ARCH} in
-    arm64)
+    arm64 | arm64-32 | armv7k)
       APP_FLAGS="-std=c99 -Wno-unused-function -D__IPHONE_OS_MIN_REQUIRED -D__IPHONE_VERSION_MIN_REQUIRED=30000"
       ;;
     *)
@@ -247,7 +257,7 @@ get_cxxflags() {
 
   local BITCODE_FLAGS=""
   case ${ARCH} in
-  arm64)
+  arm64 | arm64-32 | armv7k)
     if [ -z $NO_BITCODE ]; then
       local BITCODE_FLAGS="-fembed-bitcode"
     fi
@@ -292,7 +302,7 @@ get_common_ldflags() {
 
 get_size_optimization_ldflags() {
   case ${ARCH} in
-  arm64)
+  arm64 | arm64-32 | armv7k)
     case $1 in
     ffmpeg | ffmpeg-kit)
       echo "-Oz -dead_strip"
@@ -321,8 +331,14 @@ get_arch_specific_ldflags() {
   fi
 
   case ${ARCH} in
+  armv7k)
+    echo "-arch armv7k -march=armv7s -mfpu=neon -target $(get_target)"
+    ;;
   arm64)
     echo "-arch arm64 -march=armv8-a+crc+crypto ${BITCODE_FLAGS}"
+    ;;
+  arm64-32)
+    echo "-arch arm64_32 -march=armv8-a+crc+crypto -target $(get_target)"
     ;;
   arm64-simulator)
     echo "-arch arm64 -march=armv8-a+crc+crypto"
@@ -349,7 +365,7 @@ get_ldflags() {
   case $1 in
   ffmpeg-kit)
     case ${ARCH} in
-    arm64)
+    arm64 | arm64-32 | armv7k)
       echo "${ARCH_FLAGS} ${LINKED_LIBRARIES} ${COMMON_FLAGS} ${BITCODE_FLAGS} ${OPTIMIZATION_FLAGS}"
       ;;
     *)
@@ -391,6 +407,15 @@ set_toolchain_paths() {
 
   LOCAL_ASMFLAGS="$(get_asmflags "$1")"
   case ${ARCH} in
+  arm64-32)
+    if [ "$1" == "x265" ]; then
+      export AS="${LOCAL_GAS_PREPROCESSOR}"
+      export AS_ARGUMENTS="-arch aarch64_32"
+      export ASM_FLAGS="${LOCAL_ASMFLAGS}"
+    else
+      export AS="${LOCAL_GAS_PREPROCESSOR} -arch aarch64_32 -- ${CC} ${LOCAL_ASMFLAGS}"
+    fi
+    ;;
   arm64*)
     if [ "$1" == "x265" ]; then
       export AS="${LOCAL_GAS_PREPROCESSOR}"

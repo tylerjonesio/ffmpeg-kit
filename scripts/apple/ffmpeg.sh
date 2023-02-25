@@ -52,6 +52,12 @@ armv7s)
   ASM_OPTIONS=" --enable-neon --enable-asm"
   BITCODE_FLAGS="-fembed-bitcode -Wc,-fembed-bitcode"
   ;;
+armv7k)
+  TARGET_CPU="armv7k"
+  TARGET_ARCH="armv7k"
+  ASM_OPTIONS=" --enable-neon --enable-asm"
+  BITCODE_FLAGS="-fembed-bitcode -Wc,-fembed-bitcode"
+  ;;
 arm64)
   TARGET_CPU="armv8"
   TARGET_ARCH="aarch64"
@@ -75,6 +81,12 @@ arm64-simulator)
 arm64e)
   TARGET_CPU="armv8.3-a"
   TARGET_ARCH="aarch64"
+  ASM_OPTIONS=" --enable-neon --enable-asm"
+  BITCODE_FLAGS="-fembed-bitcode -Wc,-fembed-bitcode"
+  ;;
+arm64-32)
+  TARGET_CPU="armv8"
+  TARGET_ARCH="aarch64_32"
   ASM_OPTIONS=" --enable-neon --enable-asm"
   BITCODE_FLAGS="-fembed-bitcode -Wc,-fembed-bitcode"
   ;;

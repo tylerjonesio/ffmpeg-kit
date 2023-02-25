@@ -17,6 +17,8 @@ get_arch_name() {
   10) echo "x86-64-mac-catalyst" ;; # ios
   11) echo "arm64-mac-catalyst" ;; # ios
   12) echo "arm64-simulator" ;; # ios, tvos
+  13) echo "arm64-32";; #watchos
+  14) echo "armv7k";; #watchos
   esac
 }
 
@@ -43,6 +45,8 @@ from_arch_name() {
   x86-64-mac-catalyst) echo 10 ;; # ios
   arm64-mac-catalyst) echo 11 ;; # ios
   arm64-simulator) echo 12 ;; # ios
+  arm64-32) echo 13;; #watchos
+  armv7k) echo 14;; #watchos
   esac
 }
 
@@ -425,6 +429,15 @@ is_arch_supported_on_platform() {
     fi
     ;;
 
+    # WATCHOS
+  $ARCH_ARMV7K | $ARCH_ARM64_32)
+    if [[ ${FFMPEG_KIT_BUILD_TYPE} == "watchos" ]]; then
+      echo 1
+    else
+      echo 0
+    fi
+    ;;
+
     # IOS OR TVOS
   $ARCH_ARM64_SIMULATOR)
     if [[ ${FFMPEG_KIT_BUILD_TYPE} == "ios" ]] || [[ ${FFMPEG_KIT_BUILD_TYPE} == "tvos" ]] || [[ ${FFMPEG_KIT_BUILD_TYPE} == "watchos" ]]; then
@@ -514,6 +527,9 @@ get_target() {
   i386)
     echo "$(get_target_cpu)-apple-ios$(get_min_sdk_version)-simulator"
     ;;
+  armv7k | arm64-32)
+    echo "$(get_target_cpu)-apple-watchos$(get_min_sdk_version)"
+    ;;
   arm64)
     if [[ ${FFMPEG_KIT_BUILD_TYPE} == "ios" ]]; then
       echo "$(get_target_cpu)-apple-ios$(get_min_sdk_version)"
@@ -585,6 +601,9 @@ get_host() {
     elif [[ ${FFMPEG_KIT_BUILD_TYPE} == "watchos" ]]; then
       echo "$(get_target_cpu)-watchos-darwin"
     fi
+    ;;
+  armv7k | arm64-32)
+    echo "$(get_target_cpu)-watchos-darwin"
     ;;
   x86)
     echo "i686-linux-android"
@@ -1442,6 +1461,9 @@ set_arch() {
   armv7s)
     ENABLED_ARCHITECTURES[ARCH_ARMV7S]=$2
     ;;
+  armv7k)
+    ENABLED_ARCHITECTURES[ARCH_ARMV7K]=$2
+    ;;
   arm64-v8a)
     ENABLED_ARCHITECTURES[ARCH_ARM64_V8A]=$2
     ;;
@@ -1456,6 +1478,9 @@ set_arch() {
     ;;
   arm64e)
     ENABLED_ARCHITECTURES[ARCH_ARM64E]=$2
+    ;;
+  arm64-32)
+    ENABLED_ARCHITECTURES[ARCH_ARM64_32]=$2
     ;;
   i386)
     ENABLED_ARCHITECTURES[ARCH_I386]=$2
@@ -1576,7 +1601,7 @@ print_enabled_architectures() {
   echo -n "Architectures: "
 
   let enabled=0
-  for print_arch in {0..12}; do
+  for print_arch in {0..14}; do
     if [[ ${ENABLED_ARCHITECTURES[$print_arch]} -eq 1 ]]; then
       if [[ ${enabled} -ge 1 ]]; then
         echo -n ", "

@@ -1397,6 +1397,9 @@ EOF
     arm64:Darwin:*:*)
 	GUESS=aarch64-apple-darwin$UNAME_RELEASE
 	;;
+	arm64-32:Darwin:*:*)
+	GUESS=aarch64_32-apple-darwin$UNAME_RELEASE
+	;;
     *:Darwin:*:*)
 	UNAME_PROCESSOR=`uname -p`
 	case $UNAME_PROCESSOR in

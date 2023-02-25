@@ -150,6 +150,8 @@
     [arch appendString:@"armv7"];
 #elif FFMPEG_KIT_ARMV7S
     [arch appendString:@"armv7s"];
+#elif FFMPEG_KIT_ARMV7K
+    [arch appendString:@"armv7k"];
 #elif FFMPEG_KIT_ARM64
     [arch appendString:@"arm64"];
 #elif FFMPEG_KIT_ARM64_MAC_CATALYST
@@ -158,6 +160,8 @@
     [arch appendString:@"arm64_simulator"];
 #elif FFMPEG_KIT_ARM64E
     [arch appendString:@"arm64e"];
+#elif FFMPEG_KIT_ARM64_32
+    [arch appendString:@"arm64_32"];
 #elif FFMPEG_KIT_I386
     [arch appendString:@"i386"];
 #elif FFMPEG_KIT_X86_64

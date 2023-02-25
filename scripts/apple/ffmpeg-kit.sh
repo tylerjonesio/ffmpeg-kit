@@ -58,6 +58,10 @@ if [[ ${FFMPEG_KIT_BUILD_TYPE} != "macos" ]]; then
   ${SED_INLINE} 's/${wl}dynamic_lookup//g' configure 1>>"${BASEDIR}"/build.log 2>&1 || return 1
 fi
 
+# UPDATE CONFIG FILES TO SUPPORT APPLE ARCHITECTURES
+overwrite_file "${FFMPEG_KIT_TMPDIR}"/source/config/config.guess "${BASEDIR}"/apple/config.guess || return 1
+overwrite_file "${FFMPEG_KIT_TMPDIR}"/source/config/config.sub "${BASEDIR}"/apple/config.sub || return 1
+
 ./configure \
   --prefix="${FFMPEG_KIT_LIBRARY_PATH}" \
   --with-pic \

@@ -123,7 +123,7 @@ disable_watchos_architecture_not_supported_on_detected_sdk_version() {
   case ${ARCH_NAME} in
   arm64-simulator)
 
-    # INTRODUCED IN WATCHOS SDK 9.0
+    # INTRODUCED IN WATCHOS SDK 14.0
     if [[ $(compare_versions "$DETECTED_WATCHOS_SDK_VERSION" "9.0") -ge 1 ]]; then
       local SUPPORTED=1
     else
@@ -848,7 +848,7 @@ get_apple_architectures_for_variant() {
     done
     ;;
   "${ARCH_VAR_WATCHOS}")
-    for index in ${ARCH_ARM64}; do
+    for index in ${ARCH_ARM64} ${ARCH_ARM64_32} ${ARCH_ARMV7K}; do
       ARCHITECTURES+=" $(get_full_arch_name "${index}") "
     done
     ;;
@@ -886,6 +886,9 @@ get_cmake_osx_architectures() {
 
 get_target_cpu() {
   case ${ARCH} in
+  arm64-32)
+    echo "arm64_32"
+    ;;
   arm64*)
     echo "arm64"
     ;;
@@ -1072,6 +1075,12 @@ get_sdk_name() {
       ;;
     esac
     ;;
+  arm64-32)
+    echo "watchos"
+    ;;
+  armv7k)
+    echo "watchos"
+    ;;
   x86-64)
     case ${FFMPEG_KIT_BUILD_TYPE} in
     ios)
@@ -1114,6 +1123,12 @@ get_min_version_cflags() {
   case ${ARCH} in
   armv7 | armv7s | arm64e)
     echo "-miphoneos-version-min=$(get_min_sdk_version)"
+    ;;
+  arm64-32)
+    echo "-mwatchos-version-min=$(get_min_sdk_version)"
+    ;;
+  armv7k)
+    echo "-mwatchos-version-min=$(get_min_sdk_version)"
     ;;
   arm64)
     case ${FFMPEG_KIT_BUILD_TYPE} in
