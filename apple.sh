@@ -7,17 +7,19 @@ enable_default_architecture_variants() {
   ENABLED_ARCHITECTURE_VARIANTS[ARCH_VAR_APPLETVOS]=1
   ENABLED_ARCHITECTURE_VARIANTS[ARCH_VAR_APPLETVSIMULATOR]=1
   ENABLED_ARCHITECTURE_VARIANTS[ARCH_VAR_MACOS]=1
+  ENABLED_ARCHITECTURE_VARIANTS[ARCH_VAR_WATCHOS]=1
+  ENABLED_ARCHITECTURE_VARIANTS[ARCH_VAR_WATCHSIMULATOR]=1
 }
 
 display_help() {
   COMMAND=$(echo "$0" | sed -e 's/\.\///g')
 
   echo -e "\n'$COMMAND' combines FFmpegKit frameworks created for Apple architecture variants in an xcframework. \
-It uses frameworks created under the prebuilt folder for iOS, tvOS and macOS architecture variants (iphoneos, \
+It uses frameworks created under the prebuilt folder for iOS, tvOS, watchOS, and macOS architecture variants (iphoneos, \
 iphonesimulator, mac-catalyst, appletvos, appletvsimulator, macosx) as input and builds an umbrella xcframework under \
 the prebuilt folder.\n\nPlease note that this script is only responsible of packaging existing frameworks, created by \
-'ios.sh', 'tvos.sh' and 'macos.sh'. Running it will not compile any of these libraries again. Top level build scripts \
-('ios.sh', 'tvos.sh', 'macos.sh') must be used to build ffmpeg with support for a specific external library first. \
+'ios.sh', 'tvos.sh', 'watchos.sh', and 'macos.sh'. Running it will not compile any of these libraries again. Top level build scripts \
+('ios.sh', 'tvos.sh', 'watchos.sh', 'macos.sh') must be used to build ffmpeg with support for a specific external library first. \
 After that this script should be used to create an umbrella xcframework.\n"
   echo -e "Usage: ./$COMMAND [OPTION]...\n"
   echo -e "Specify environment variables as VARIABLE=VALUE to override default build options.\n"
@@ -34,6 +36,8 @@ After that this script should be used to create an umbrella xcframework.\n"
   echo -e "  --disable-mac-catalyst\tdo not include ios mac-catalyst architecture variant [yes]"
   echo -e "  --disable-appletvos\t\tdo not include appletvos architecture variant [yes]"
   echo -e "  --disable-appletvsimulator\tdo not include appletvsimulator architecture variant [yes]"
+  echo -e "  --disable-watchos\t\tdo not include watchos architecture variant [yes]"
+  echo -e "  --disable-watchsimulator\tdo not include watchsimulator architecture variant [yes]"
   echo -e "  --disable-macosx\t\tdo not include macosx architecture variant [yes]\n"
 }
 
@@ -98,6 +102,12 @@ disable_arch_variant() {
   appletvsimulator)
     ENABLED_ARCHITECTURE_VARIANTS[ARCH_VAR_APPLETVSIMULATOR]=0
     ;;
+  watchos)
+    ENABLED_ARCHITECTURE_VARIANTS[ARCH_VAR_WATCHOS]=0
+    ;;
+  watchsimulator)
+    ENABLED_ARCHITECTURE_VARIANTS[ARCH_VAR_WATCHSIMULATOR]=0
+    ;;
   macosx)
     ENABLED_ARCHITECTURE_VARIANTS[ARCH_VAR_MACOS]=0
     ;;
@@ -136,8 +146,9 @@ fi
 # DETECT SDK VERSIONS
 DETECTED_IOS_SDK_VERSION="$(xcrun --sdk iphoneos --show-sdk-version 2>>"${BASEDIR}"/build.log)"
 DETECTED_TVOS_SDK_VERSION="$(xcrun --sdk appletvos --show-sdk-version 2>>"${BASEDIR}"/build.log)"
+DETECTED_WATCHOS_SDK_VERSION="$(xcrun --sdk watchos --show-sdk-version 2>>"${BASEDIR}"/build.log)"
 DETECTED_MACOS_SDK_VERSION="$(xcrun --sdk macosx --show-sdk-version 2>>"${BASEDIR}"/build.log)"
-echo -e "INFO: Using iOS SDK: ${DETECTED_IOS_SDK_VERSION}, tvOS SDK: ${DETECTED_TVOS_SDK_VERSION}, macOS SDK: ${DETECTED_MACOS_SDK_VERSION} by Xcode provided at $(xcode-select -p)\n" 1>>"${BASEDIR}"/build.log 2>&1
+echo -e "INFO: Using iOS SDK: ${DETECTED_IOS_SDK_VERSION}, tvOS SDK: ${DETECTED_TVOS_SDK_VERSION}, watchOS SDK: ${DETECTED_WATCHOS_SDK_VERSION}, macOS SDK: ${DETECTED_MACOS_SDK_VERSION} by Xcode provided at $(xcode-select -p)\n" 1>>"${BASEDIR}"/build.log 2>&1
 echo -e "INFO: Build options: $*\n" 1>>"${BASEDIR}"/build.log 2>&1
 
 # SET DEFAULT BUILD OPTIONS
@@ -206,7 +217,7 @@ echo ""
 TARGET_ARCHITECTURE_VARIANT_INDEX_ARRAY=()
 
 # SAVE ARCHITECTURE VARIANTS
-for run_arch_variant in {1..8}; do
+for run_arch_variant in {1..10}; do
   if [[ ${ENABLED_ARCHITECTURE_VARIANTS[$run_arch_variant]} -eq 1 ]]; then
     case "$run_arch_variant" in
     1 | 5) ;;

@@ -30,11 +30,11 @@ ARCH_ARM_V7A_NEON=1         # android
 ARCH_ARMV7=2                # ios
 ARCH_ARMV7S=3               # ios
 ARCH_ARM64_V8A=4            # android
-ARCH_ARM64=5                # ios, tvos, macos
+ARCH_ARM64=5                # ios, tvos, macos, watchos
 ARCH_ARM64E=6               # ios
 ARCH_I386=7                 # ios
 ARCH_X86=8                  # android
-ARCH_X86_64=9               # android, ios, linux, macos, tvos
+ARCH_X86_64=9               # android, ios, linux, macos, tvos, watchos
 ARCH_X86_64_MAC_CATALYST=10 # ios
 ARCH_ARM64_MAC_CATALYST=11  # ios
 ARCH_ARM64_SIMULATOR=12     # ios
@@ -48,6 +48,8 @@ ARCH_VAR_TVOS=5             # tvos
 ARCH_VAR_APPLETVOS=6        # tvos
 ARCH_VAR_APPLETVSIMULATOR=7 # tvos
 ARCH_VAR_MACOS=8            # macos
+ARCH_VAR_WATCHOS=9          # watchos
+ARCH_VAR_WATCHSIMULATOR=10  # watchos
 
 # LIBRARY INDEXES
 LIBRARY_FONTCONFIG=0

@@ -21,9 +21,9 @@ It includes scripts to build `FFmpeg` native libraries, a wrapper library to run
 
 See [Android](android) to learn more about `FFmpegKit` for `Android`.
 
-### 3. iOS, macOS, tvOS
+### 3. iOS, macOS, tvOS, watchOS
 
-See [Apple](apple) to use `FFmpegKit` on `Apple` platforms (`iOS`, `macOS`, `tvOS`).
+See [Apple](apple) to use `FFmpegKit` on `Apple` platforms (`iOS`, `macOS`, `tvOS`, `watchOS`).
 
 ### 4. Flutter
 
@@ -39,7 +39,7 @@ See [React Native](react-native) to learn more about `FFmpegKit` for `React Nati
 
 ### 7. Build Scripts
 
-Use `android.sh`, `ios.sh`, `linux.sh`, `macos.sh` and `tvos.sh` to build `FFmpegKit` for each native platform.
+Use `android.sh`, `ios.sh`, `linux.sh`, `macos.sh`, `watchOS`, and `tvos.sh` to build `FFmpegKit` for each native platform.
 
 All scripts support additional options to enable optional libraries and disable platform architectures. See
 [Building](https://github.com/arthenica/ffmpeg-kit/wiki/Building) wiki page for the details.
@@ -50,7 +50,7 @@ All scripts support additional options to enable optional libraries and disable 
 provides additional features on top of `FFmpeg` to enable platform specific resources, control how commands are 
 executed and how the results are handled.
 
-`Android` library of `FFmpegKit` has a `Java` API, `Apple` libraries (`iOS`, `macOS`, `tvOS`) have an `Objective-C`
+`Android` library of `FFmpegKit` has a `Java` API, `Apple` libraries (`iOS`, `macOS`, `tvOS`, `watchOS`) have an `Objective-C`
  API, `Flutter` library comes with a `Dart` API, `Linux` library has a `C++` API and `React Native` library provides
 a `JavaScript` API with `Typescript` definitions, which are identical in terms of features and capabilities.
 

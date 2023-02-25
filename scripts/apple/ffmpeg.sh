@@ -315,7 +315,7 @@ for library in {0..61}; do
       FFMPEG_CFLAGS+=" $(pkg-config --cflags hogweed 2>>"${BASEDIR}"/build.log)"
       FFMPEG_LDFLAGS+=" $(pkg-config --libs --static hogweed 2>>"${BASEDIR}"/build.log)"
       ;;
-    ios-* | tvos-* | macos-*)
+    ios-* | tvos-* | macos-* | watchos-*)
 
       # BUILT-IN LIBRARIES SHARE INCLUDE AND LIB DIRECTORIES
       # INCLUDING ONLY ONE OF THEM IS ENOUGH

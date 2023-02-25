@@ -117,6 +117,35 @@ disable_tvos_architecture_not_supported_on_detected_sdk_version() {
 #
 # 1. architecture index
 #
+disable_watchos_architecture_not_supported_on_detected_sdk_version() {
+  local ARCH_NAME=$(get_arch_name $1)
+
+  case ${ARCH_NAME} in
+  arm64-simulator)
+
+    # INTRODUCED IN WATCHOS SDK 9.0
+    if [[ $(compare_versions "$DETECTED_WATCHOS_SDK_VERSION" "9.0") -ge 1 ]]; then
+      local SUPPORTED=1
+    else
+      local SUPPORTED=0
+    fi
+    ;;
+  *)
+    local SUPPORTED=1
+    ;;
+  esac
+
+  if [[ ${SUPPORTED} -ne 1 ]]; then
+    if [[ -z ${BUILD_FORCE} ]]; then
+      echo -e "INFO: Disabled ${ARCH_NAME} architecture which is not supported on watchOS SDK $DETECTED_WATCHOS_SDK_VERSION\n" 1>>"${BASEDIR}"/build.log 2>&1
+      disable_arch "${ARCH_NAME}"
+    fi
+  fi
+}
+
+#
+# 1. architecture index
+#
 disable_macos_architecture_not_supported_on_detected_sdk_version() {
   local ARCH_NAME=$(get_arch_name $1)
 
@@ -161,6 +190,9 @@ build_apple_architecture_variant_strings() {
   export APPLETVOS_ARCHITECTURES="$(get_apple_architectures_for_variant "${ARCH_VAR_APPLETVOS}")"
   export APPLETV_SIMULATOR_ARCHITECTURES="$(get_apple_architectures_for_variant "${ARCH_VAR_APPLETVSIMULATOR}")"
   export MACOSX_ARCHITECTURES="$(get_apple_architectures_for_variant "${ARCH_VAR_MACOS}")"
+  # export ALL_WATCHOS_ARCHITECTURES="$(get_apple_architectures_for_variant "${ARCH_VAR_WATCHOS}")"
+  export WATCHOS_ARCHITECTURES="$(get_apple_architectures_for_variant "${ARCH_VAR_WATCHOS}")"
+  export WATCH_SIMULATOR_ARCHITECTURES="$(get_apple_architectures_for_variant "${ARCH_VAR_WATCHSIMULATOR}")"
 }
 
 #
@@ -653,6 +685,12 @@ get_framework_directory() {
   "${ARCH_VAR_APPLETVSIMULATOR}")
     echo "bundle-apple-framework-appletvsimulator${LTS_POSTFIX}"
     ;;
+  "${ARCH_VAR_WATCHOS}")
+    echo "bundle-apple-framework-watchos${LTS_POSTFIX}"
+    ;;
+  "${ARCH_VAR_WATCHSIMULATOR}")
+    echo "bundle-apple-framework-watchsimulator${LTS_POSTFIX}"
+    ;;
   "${ARCH_VAR_MACOS}")
     echo "bundle-apple-framework-macos${LTS_POSTFIX}"
     ;;
@@ -709,6 +747,12 @@ get_universal_library_directory() {
   "${ARCH_VAR_APPLETVSIMULATOR}")
     echo "bundle-apple-universal-appletvsimulator${LTS_POSTFIX}"
     ;;
+  "${ARCH_VAR_WATCHOS}")
+    echo "bundle-apple-universal-watchos${LTS_POSTFIX}"
+    ;;
+  "${ARCH_VAR_WATCHSIMULATOR}")
+    echo "bundle-apple-universal-watchsimulator${LTS_POSTFIX}"
+    ;;
   "${ARCH_VAR_MACOS}")
     echo "bundle-apple-universal-macos${LTS_POSTFIX}"
     ;;
@@ -746,6 +790,12 @@ get_apple_architecture_variant() {
     ;;
   "${ARCH_VAR_APPLETVSIMULATOR}")
     echo "appletvsimulator${LTS_POSTFIX}"
+    ;;
+  "${ARCH_VAR_WATCHOS}")
+    echo "watchos${LTS_POSTFIX}"
+    ;;
+  "${ARCH_VAR_WATCHSIMULATOR}")
+    echo "watchsimulator${LTS_POSTFIX}"
     ;;
   "${ARCH_VAR_MACOS}")
     echo "macos${LTS_POSTFIX}"
@@ -793,6 +843,16 @@ get_apple_architectures_for_variant() {
     done
     ;;
   "${ARCH_VAR_APPLETVSIMULATOR}")
+    for index in ${ARCH_X86_64} ${ARCH_ARM64_SIMULATOR}; do
+      ARCHITECTURES+=" $(get_full_arch_name "${index}") "
+    done
+    ;;
+  "${ARCH_VAR_WATCHOS}")
+    for index in ${ARCH_ARM64}; do
+      ARCHITECTURES+=" $(get_full_arch_name "${index}") "
+    done
+    ;;
+  "${ARCH_VAR_WATCHSIMULATOR}")
     for index in ${ARCH_X86_64} ${ARCH_ARM64_SIMULATOR}; do
       ARCHITECTURES+=" $(get_full_arch_name "${index}") "
     done
@@ -926,6 +986,11 @@ build_info_plist() {
     local MINIMUM_OS_VERSION="${TVOS_MIN_VERSION}"
     local SUPPORTED_PLATFORMS="AppleTVOS"
     ;;
+  watchos)
+    local MINIMUM_VERSION_KEY="MinimumOSVersion"
+    local MINIMUM_OS_VERSION="${WATCHOS_MIN_VERSION}"
+    local SUPPORTED_PLATFORMS="watchOS"
+    ;;
   macos)
     local MINIMUM_VERSION_KEY="LSMinimumSystemVersion"
     local MINIMUM_OS_VERSION="${MACOS_MIN_VERSION}"
@@ -977,6 +1042,9 @@ get_default_sdk_name() {
   tvos)
     echo "appletvos"
     ;;
+  watchos)
+    echo "watchos"
+    ;;
   macos)
     echo "macosx"
     ;;
@@ -996,6 +1064,9 @@ get_sdk_name() {
     tvos)
       echo "appletvos"
       ;;
+    watchos)
+      echo "watchos"
+      ;;
     macos)
       echo "macosx"
       ;;
@@ -1008,6 +1079,9 @@ get_sdk_name() {
       ;;
     tvos)
       echo "appletvsimulator"
+      ;;
+    watchos)
+      echo "watchsimulator"
       ;;
     macos)
       echo "macosx"
@@ -1024,6 +1098,9 @@ get_sdk_name() {
       ;;
     tvos)
       echo "appletvsimulator"
+      ;;
+    watchos)
+      echo "watchsimulator"
       ;;
     esac
     ;;
@@ -1046,6 +1123,9 @@ get_min_version_cflags() {
     tvos)
       echo "-mappletvos-version-min=$(get_min_sdk_version)"
       ;;
+    watchos)
+      echo "-mwatchos-version-min=$(get_min_sdk_version)"
+      ;;
     macos)
       echo "-mmacosx-version-min=$(get_min_sdk_version)"
       ;;
@@ -1058,6 +1138,9 @@ get_min_version_cflags() {
       ;;
     tvos)
       echo "-mappletvsimulator-version-min=$(get_min_sdk_version)"
+      ;;
+    watchos)
+      echo "-mwatchsimulator-version-min=$(get_min_sdk_version)"
       ;;
     macos)
       echo "-mmacosx-version-min=$(get_min_sdk_version)"
@@ -1074,6 +1157,9 @@ get_min_version_cflags() {
       ;;
     tvos)
       echo "-mappletvsimulator-version-min=$(get_min_sdk_version)"
+      ;;
+    watchos)
+      echo "-mwatchsimulator-version-min=$(get_min_sdk_version)"
       ;;
     esac
     ;;
@@ -1095,6 +1181,9 @@ get_min_sdk_version() {
       ;;
     tvos)
       echo "${TVOS_MIN_VERSION}"
+      ;;
+    watchos)
+      echo "${WATCHOS_MIN_VERSION}"
       ;;
     macos)
       echo "${MACOS_MIN_VERSION}"
