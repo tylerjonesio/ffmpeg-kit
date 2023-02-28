@@ -501,6 +501,91 @@ fi
 # 3. Use thread local log levels
 ${SED_INLINE} 's/static int av_log_level/__thread int av_log_level/g' "${BASEDIR}"/src/${LIB_NAME}/libavutil/log.c 1>>"${BASEDIR}"/build.log 2>&1 || return 1
 
+# Disable unneeded items for lite build
+if [[ -z ${FFMPEG_BUILD_FULL} ]]; then
+  FFCMD_DISABLE='--disable-encoders 
+    --enable-encoder="h264_videotoolbox" 
+    --enable-encoder="hevc_videotoolbox" 
+    --enable-encoder="mjpeg" 
+    --enable-encoder="mpeg4" 
+    --enable-encoder="aac" 
+    --enable-encoder="pcm_alaw" 
+    --enable-encoder="pcm_alaw_at" 
+    --enable-encoder="pcm_f32be" 
+    --enable-encoder="pcm_f32le" 
+    --enable-encoder="pcm_f64be" 
+    --enable-encoder="pcm_f64le" 
+    --enable-encoder="pcm_mulaw" 
+    --enable-encoder="pcm_mulaw_at" 
+    --enable-encoder="pcm_s16be" 
+    --enable-encoder="pcm_s16be_planar" 
+    --enable-encoder="pcm_s16le" 
+    --enable-encoder="pcm_s16le_planar" 
+    --enable-encoder="pcm_s24be" 
+    --enable-encoder="pcm_s24daud" 
+    --enable-encoder="pcm_s24le" 
+    --enable-encoder="pcm_s24le_planar" 
+    --enable-encoder="pcm_s32be" 
+    --enable-encoder="pcm_s32le" 
+    --enable-encoder="pcm_s32le_planar" 
+    --enable-encoder="pcm_s64be" 
+    --enable-encoder="pcm_s64le" 
+    --enable-encoder="pcm_s8" 
+    --enable-encoder="pcm_s8_planar" 
+    --enable-encoder="pcm_u16be" 
+    --enable-encoder="pcm_u16le" 
+    --enable-encoder="pcm_u24be" 
+    --enable-encoder="pcm_u24le" 
+    --enable-encoder="pcm_u32be" 
+    --enable-encoder="pcm_u32le" 
+    --enable-encoder="pcm_u8" 
+    --disable-muxers 
+    --enable-muxer="audiotoolbox" 
+    --enable-muxer="f32be" 
+    --enable-muxer="f32le" 
+    --enable-muxer="f64be" 
+    --enable-muxer="f64le" 
+    --enable-muxer="g722" 
+    --enable-muxer="g723_1" 
+    --enable-muxer="g726" 
+    --enable-muxer="g726le" 
+    --enable-muxer="h264" 
+    --enable-muxer="hevc" 
+    --enable-muxer="hls" 
+    --enable-muxer="mp4" 
+    --enable-muxer="mulaw" 
+    --enable-muxer="rtsp" 
+    --enable-muxer="s16be" 
+    --enable-muxer="s16le" 
+    --enable-muxer="s24be" 
+    --enable-muxer="s24le" 
+    --enable-muxer="s32be" 
+    --enable-muxer="s32le" 
+    --enable-muxer="s8" 
+    --enable-muxer="tee" 
+    --enable-muxer="u16be" 
+    --enable-muxer="u16le" 
+    --enable-muxer="u24be" 
+    --enable-muxer="u24le" 
+    --enable-muxer="u32be" 
+    --enable-muxer="u32le" 
+    --enable-muxer="u8" 
+    --disable-protocol="async" 
+    --disable-protocol="bluray" 
+    --disable-protocol="cache" 
+    --disable-protocol="concat" 
+    --disable-protocol="contacf" 
+    --disable-protocol="cache" 
+    --disable-protocol="data" 
+    --disable-protocol="ftp" 
+    --disable-protocol="gopher" 
+    --disable-protocol="gophers" 
+    --disable-protocol="pipe" 
+    --disable-protocol="subfile" 
+    --disable-protocol="unix" 
+    --disable-protocol="zmq"'
+fi
+
 ###################################################################
 
 ./configure \
@@ -560,6 +645,7 @@ ${SED_INLINE} 's/static int av_log_level/__thread int av_log_level/g' "${BASEDIR
   --disable-nvenc \
   --disable-vaapi \
   --disable-vdpau \
+  ${FFCMD_DISABLE} \
   ${CONFIGURE_POSTFIX} 1>>"${BASEDIR}"/build.log 2>&1
 
 if [[ $? -ne 0 ]]; then

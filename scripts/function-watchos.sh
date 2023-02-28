@@ -50,10 +50,10 @@ set explicitly. When compilation ends, libraries are created under the prebuilt 
 }
 
 enable_main_build() {
-  if [[ $(compare_versions "$DETECTED_WATCHOS_SDK_VERSION" "9.0") -le 0 ]]; then
+  if [[ $(compare_versions "$DETECTED_WATCHOS_SDK_VERSION" "7.0") -le 0 ]]; then
     export WATCHOS_MIN_VERSION=$DETECTED_WATCHOS_SDK_VERSION
   else
-    export WATCHOS_MIN_VERSION=9.0
+    export WATCHOS_MIN_VERSION=7.0
   fi
 }
 
@@ -61,7 +61,7 @@ enable_lts_build() {
   export FFMPEG_KIT_LTS_BUILD="1"
 
   # XCODE 8.0 HAS WATCHOS SDK 10.0
-  export WATCHOS_MIN_VERSION=9.0
+  export WATCHOS_MIN_VERSION=7.0
 }
 
 get_common_includes() {

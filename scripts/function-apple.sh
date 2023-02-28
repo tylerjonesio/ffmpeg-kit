@@ -124,7 +124,7 @@ disable_watchos_architecture_not_supported_on_detected_sdk_version() {
   arm64-simulator)
 
     # INTRODUCED IN WATCHOS SDK 14.0
-    if [[ $(compare_versions "$DETECTED_WATCHOS_SDK_VERSION" "9.0") -ge 1 ]]; then
+    if [[ $(compare_versions "$DETECTED_WATCHOS_SDK_VERSION" "7.0") -ge 1 ]]; then
       local SUPPORTED=1
     else
       local SUPPORTED=0
