@@ -24,8 +24,8 @@ fi
 ${SED_INLINE} "s|AM_CCASFLAGS =|#AM_CCASFLAGS=|g" "${BASEDIR}"/src/"${LIB_NAME}"/lib/accelerated/aarch64/Makefile.in
 
 # UPDATE CONFIG FILES TO SUPPORT APPLE ARCHITECTURES
-#overwrite_file "${FFMPEG_KIT_TMPDIR}"/source/config/config.guess "${BASEDIR}"/src/"${LIB_NAME}"/gnulib/build-aux/config.guess || return 1
-#overwrite_file "${FFMPEG_KIT_TMPDIR}"/source/config/config.sub "${BASEDIR}"/src/"${LIB_NAME}"/gnulib/build-aux/config.sub || return 1
+overwrite_file "${FFMPEG_KIT_TMPDIR}"/source/config/config.guess "${BASEDIR}"/src/"${LIB_NAME}"/gnulib/build-aux/config.guess || return 1
+overwrite_file "${FFMPEG_KIT_TMPDIR}"/source/config/config.sub "${BASEDIR}"/src/"${LIB_NAME}"/gnulib/build-aux/config.sub || return 1
 
 ./configure \
   --prefix="${LIB_INSTALL_PREFIX}" \
