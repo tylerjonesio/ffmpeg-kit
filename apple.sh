@@ -242,8 +242,6 @@ if [[ -n ${TARGET_ARCHITECTURE_VARIANT_INDEX_ARRAY[0]} ]]; then
     create_umbrella_xcframework "${FFMPEG_LIB}"
   done
 
-  create_umbrella_xcframework "ffmpegkit"
-
   echo -e -n "INFO: Umbrella xcframeworks created successfully\n\n" 1>>"${BASEDIR}"/build.log 2>&1
   echo -e "ok\n"
 fi

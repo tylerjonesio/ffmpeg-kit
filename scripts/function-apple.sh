@@ -745,45 +745,6 @@ get_static_archive_name() {
   esac
 }
 
-build_modulemap() {
-  local FILE_PATH="$1"
-
-  cat >"${FILE_PATH}" <<EOF
-framework module ffmpegkit {
-
-  header "AbstractSession.h"
-  header "ArchDetect.h"
-  header "AtomicLong.h"
-  header "Chapter.h"
-  header "FFmpegKit.h"
-  header "FFmpegKitConfig.h"
-  header "FFmpegSession.h"
-  header "FFmpegSessionCompleteCallback.h"
-  header "FFprobeKit.h"
-  header "FFprobeSession.h"
-  header "FFprobeSessionCompleteCallback.h"
-  header "Level.h"
-  header "Log.h"
-  header "LogCallback.h"
-  header "LogRedirectionStrategy.h"
-  header "MediaInformation.h"
-  header "MediaInformationJsonParser.h"
-  header "MediaInformationSession.h"
-  header "MediaInformationSessionCompleteCallback.h"
-  header "Packages.h"
-  header "ReturnCode.h"
-  header "Session.h"
-  header "SessionState.h"
-  header "Statistics.h"
-  header "StatisticsCallback.h"
-  header "StreamInformation.h"
-  header "ffmpegkit_exception.h"
-
-  export *
-}
-EOF
-}
-
 build_info_plist() {
   local FILE_PATH="$1"
   local FRAMEWORK_NAME="$2"
