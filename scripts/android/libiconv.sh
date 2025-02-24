@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # FIX HARD-CODED PATHS
-${SED_INLINE} 's|git://git.savannah.gnu.org|https://github.com/arthenica|g' "${BASEDIR}"/src/"${LIB_NAME}"/.gitmodules || return 1
+# ${SED_INLINE} 's|git://git.savannah.gnu.org|https://github.com/arthenica|g' "${BASEDIR}"/src/"${LIB_NAME}"/.gitmodules || return 1
 ln -s -f $(which aclocal) ${BASEDIR}/.tmp/aclocal-1.16
 ln -s -f $(which automake) ${BASEDIR}/.tmp/automake-1.16
 PATH="${BASEDIR}/.tmp":$PATH

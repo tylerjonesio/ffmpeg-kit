@@ -57,12 +57,12 @@ get_library_source() {
   #   SOURCE_TYPE="TAG"
   #   ;;
   gmp)
-    SOURCE_REPO_URL="https://github.com/arthenica/gmp"
+    SOURCE_REPO_URL="https://github.com/tylerjonesio/gmp"
     SOURCE_ID="v6.2.1"
     SOURCE_TYPE="TAG"
     ;;
   gnutls)
-    SOURCE_REPO_URL="https://github.com/arthenica/gnutls"
+    SOURCE_REPO_URL="https://gitlab.com/gnutls/gnutls/"
     SOURCE_ID="3.7.9"
     SOURCE_TYPE="TAG"
     ;;
@@ -166,11 +166,11 @@ get_library_source() {
   #   SOURCE_ID="v2.11.4"
   #   SOURCE_TYPE="TAG"
   #   ;;
-  # nettle)
-  #   SOURCE_REPO_URL="https://github.com/arthenica/nettle"
-  #   SOURCE_ID="nettle_3.8.1_release_20220727"
-  #   SOURCE_TYPE="TAG"
-  #   ;;
+  nettle)
+    SOURCE_REPO_URL="https://git.lysator.liu.se/nettle/nettle"
+    SOURCE_ID="nettle_3.8.1_release_20220727"
+    SOURCE_TYPE="TAG"
+    ;;
   # opencore-amr)
   #   SOURCE_REPO_URL="https://github.com/arthenica/opencore-amr"
   #   SOURCE_ID="v0.1.6"
