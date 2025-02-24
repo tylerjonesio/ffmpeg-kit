@@ -542,8 +542,6 @@ create_universal_libraries_for_ios_default_frameworks() {
 
   create_ffmpeg_universal_library "${ARCH_VAR_IOS}"
 
-  create_ffmpeg_kit_universal_library "${ARCH_VAR_IOS}"
-
   echo -e "INFO: Universal libraries for default frameworks built successfully\n" 1>>"${BASEDIR}"/build.log 2>&1
 }
 
@@ -551,8 +549,6 @@ create_ios_default_frameworks() {
   echo -e "INFO: Building default frameworks\n" 1>>"${BASEDIR}"/build.log 2>&1
 
   create_ffmpeg_framework "${ARCH_VAR_IOS}"
-
-  create_ffmpeg_kit_framework "${ARCH_VAR_IOS}"
 
   echo -e "INFO: Default frameworks built successfully\n" 1>>"${BASEDIR}"/build.log 2>&1
 }
@@ -564,10 +560,6 @@ create_universal_libraries_for_ios_xcframeworks() {
   create_ffmpeg_universal_library "${ARCH_VAR_IPHONESIMULATOR}"
   create_ffmpeg_universal_library "${ARCH_VAR_MAC_CATALYST}"
 
-  create_ffmpeg_kit_universal_library "${ARCH_VAR_IPHONEOS}"
-  create_ffmpeg_kit_universal_library "${ARCH_VAR_IPHONESIMULATOR}"
-  create_ffmpeg_kit_universal_library "${ARCH_VAR_MAC_CATALYST}"
-
   echo -e "INFO: Universal libraries for xcframeworks built successfully\n" 1>>"${BASEDIR}"/build.log 2>&1
 }
 
@@ -578,10 +570,6 @@ create_frameworks_for_ios_xcframeworks() {
   create_ffmpeg_framework "${ARCH_VAR_IPHONESIMULATOR}"
   create_ffmpeg_framework "${ARCH_VAR_MAC_CATALYST}"
 
-  create_ffmpeg_kit_framework "${ARCH_VAR_IPHONEOS}"
-  create_ffmpeg_kit_framework "${ARCH_VAR_IPHONESIMULATOR}"
-  create_ffmpeg_kit_framework "${ARCH_VAR_MAC_CATALYST}"
-
   echo -e "INFO: Frameworks for xcframeworks built successfully\n" 1>>"${BASEDIR}"/build.log 2>&1
 }
 
@@ -590,8 +578,6 @@ create_ios_xcframeworks() {
   echo -e "INFO: Building xcframeworks\n" 1>>"${BASEDIR}"/build.log 2>&1
 
   create_ffmpeg_xcframework
-
-  create_ffmpeg_kit_xcframework
 
   echo -e "INFO: xcframeworks built successfully\n" 1>>"${BASEDIR}"/build.log 2>&1
 }

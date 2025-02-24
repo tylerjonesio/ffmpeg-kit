@@ -423,8 +423,6 @@ create_universal_libraries_for_macos_default_frameworks() {
 
   create_ffmpeg_universal_library "${ARCH_VAR_MACOS}"
 
-  create_ffmpeg_kit_universal_library "${ARCH_VAR_MACOS}"
-
   echo -e "INFO: Universal libraries for default frameworks built successfully\n" 1>>"${BASEDIR}"/build.log 2>&1
 }
 
@@ -432,8 +430,6 @@ create_macos_default_frameworks() {
   echo -e "INFO: Building default frameworks\n" 1>>"${BASEDIR}"/build.log 2>&1
 
   create_ffmpeg_framework "${ARCH_VAR_MACOS}"
-
-  create_ffmpeg_kit_framework "${ARCH_VAR_MACOS}"
 
   echo -e "INFO: Default frameworks built successfully\n" 1>>"${BASEDIR}"/build.log 2>&1
 }
@@ -443,8 +439,6 @@ create_universal_libraries_for_macos_xcframeworks() {
 
   create_ffmpeg_universal_library "${ARCH_VAR_MACOS}"
 
-  create_ffmpeg_kit_universal_library "${ARCH_VAR_MACOS}"
-
   echo -e "INFO: Universal libraries for xcframeworks built successfully\n" 1>>"${BASEDIR}"/build.log 2>&1
 }
 
@@ -452,8 +446,6 @@ create_frameworks_for_macos_xcframeworks() {
   echo -e "INFO: Building frameworks for xcframeworks\n" 1>>"${BASEDIR}"/build.log 2>&1
 
   create_ffmpeg_framework "${ARCH_VAR_MACOS}"
-
-  create_ffmpeg_kit_framework "${ARCH_VAR_MACOS}"
 
   echo -e "INFO: Frameworks for xcframeworks built successfully\n" 1>>"${BASEDIR}"/build.log 2>&1
 }
@@ -463,8 +455,6 @@ create_macos_xcframeworks() {
   echo -e "INFO: Building xcframeworks\n" 1>>"${BASEDIR}"/build.log 2>&1
 
   create_ffmpeg_xcframework
-
-  create_ffmpeg_kit_xcframework
 
   echo -e "INFO: xcframeworks built successfully\n" 1>>"${BASEDIR}"/build.log 2>&1
 }

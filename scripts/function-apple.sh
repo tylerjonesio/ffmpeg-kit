@@ -302,64 +302,6 @@ create_ffmpeg_universal_library() {
 #
 # 1. architecture variant
 #
-# DEPENDS TARGET_ARCH_LIST VARIABLE
-#
-create_ffmpeg_kit_universal_library() {
-  local ARCHITECTURE_VARIANT="$1"
-  local TARGET_ARCHITECTURES=("$(get_apple_architectures_for_variant "${ARCHITECTURE_VARIANT}")")
-  local LIBRARY_NAME="ffmpeg-kit"
-  local UNIVERSAL_LIBRARY_DIRECTORY="${BASEDIR}/.tmp/$(get_universal_library_directory "${ARCHITECTURE_VARIANT}")"
-  local FFMPEG_KIT_UNIVERSAL_LIBRARY_DIRECTORY="${UNIVERSAL_LIBRARY_DIRECTORY}/${LIBRARY_NAME}"
-  local LIPO="$(xcrun --sdk "$(get_default_sdk_name)" -f lipo)"
-
-  if [[ $(is_apple_architecture_variant_supported "${ARCHITECTURE_VARIANT}") -eq 0 ]]; then
-
-    # THERE ARE NO ARCHITECTURES ENABLED FOR THIS LIBRARY TYPE
-    return
-  fi
-
-  # INITIALIZE UNIVERSAL LIBRARY DIRECTORY
-  initialize_folder "${FFMPEG_KIT_UNIVERSAL_LIBRARY_DIRECTORY}"
-  initialize_folder "${FFMPEG_KIT_UNIVERSAL_LIBRARY_DIRECTORY}/include"
-  initialize_folder "${FFMPEG_KIT_UNIVERSAL_LIBRARY_DIRECTORY}/lib"
-
-  local FFMPEG_KIT_DEFAULT_BUILD_PATH="${BASEDIR}/prebuilt/$(get_default_build_directory)/ffmpeg-kit"
-
-  # COPY HEADER FILES
-  cp -r "${FFMPEG_KIT_DEFAULT_BUILD_PATH}"/include/* "${FFMPEG_KIT_UNIVERSAL_LIBRARY_DIRECTORY}"/include 1>>"${BASEDIR}"/build.log 2>&1 || exit 1
-
-  local FFMPEG_KIT_UNIVERSAL_LIBRARY_PATH="${FFMPEG_KIT_UNIVERSAL_LIBRARY_DIRECTORY}/lib/libffmpegkit.dylib"
-
-  LIPO_COMMAND="${LIPO} -create"
-
-  for ARCH in "${TARGET_ARCH_LIST[@]}"; do
-    if [[ " ${TARGET_ARCHITECTURES[*]} " == *" ${ARCH} "* ]]; then
-      local FULL_LIBRARY_PATH="${BASEDIR}/prebuilt/$(get_build_directory)/${LIBRARY_NAME}/lib/libffmpegkit.dylib"
-      LIPO_COMMAND+=" ${FULL_LIBRARY_PATH}"
-    fi
-  done
-
-  LIPO_COMMAND+=" -output ${FFMPEG_KIT_UNIVERSAL_LIBRARY_PATH}"
-
-  ${LIPO_COMMAND} 1>>"${BASEDIR}"/build.log 2>&1
-
-  [[ $? -ne 0 ]] && exit_universal_library "${LIBRARY_NAME}"
-
-  # COPY UNIVERSAL LIBRARY LICENSES
-  if [[ ${GPL_ENABLED} == "yes" ]]; then
-    cp "${BASEDIR}"/tools/license/LICENSE.GPLv3 "${FFMPEG_KIT_UNIVERSAL_LIBRARY_DIRECTORY}"/LICENSE 1>>"${BASEDIR}"/build.log 2>&1 || exit 1
-  else
-    cp "${BASEDIR}"/LICENSE "${FFMPEG_KIT_UNIVERSAL_LIBRARY_DIRECTORY}"/LICENSE 1>>"${BASEDIR}"/build.log 2>&1 || exit 1
-  fi
-
-  cp "${BASEDIR}"/tools/source/SOURCE "${FFMPEG_KIT_UNIVERSAL_LIBRARY_DIRECTORY}"/SOURCE 1>>"${BASEDIR}"/build.log 2>&1 || exit 1
-
-  echo -e "DEBUG: ${LIBRARY_NAME} universal library built for $(get_apple_architecture_variant "${ARCHITECTURE_VARIANT}") platform successfully\n" 1>>"${BASEDIR}"/build.log 2>&1
-}
-
-#
-# 1. architecture variant
-#
 create_ffmpeg_framework() {
   local ARCHITECTURE_VARIANT="$1"
   local LIBRARY_NAME="ffmpeg"
@@ -468,85 +410,6 @@ create_ffmpeg_framework() {
   done
 }
 
-#
-# 1. architecture variant
-#
-create_ffmpeg_kit_framework() {
-  local ARCHITECTURE_VARIANT="$1"
-  local LIBRARY_NAME="ffmpeg-kit"
-  local UNIVERSAL_LIBRARY_DIRECTORY="${BASEDIR}/.tmp/$(get_universal_library_directory "${ARCHITECTURE_VARIANT}")"
-  local FFMPEG_KIT_UNIVERSAL_LIBRARY_DIRECTORY="${UNIVERSAL_LIBRARY_DIRECTORY}/${LIBRARY_NAME}"
-
-  if [[ $(is_apple_architecture_variant_supported "${ARCHITECTURE_VARIANT}") -eq 0 ]]; then
-
-    # THERE ARE NO ARCHITECTURES ENABLED FOR THIS LIBRARY TYPE
-    return
-  fi
-
-  local FFMPEG_KIT_VERSION=$(get_ffmpeg_kit_version)
-
-  # INITIALIZE FRAMEWORK DIRECTORY
-  local FFMPEG_KIT_FRAMEWORK_PATH="${BASEDIR}/prebuilt/$(get_framework_directory "${ARCHITECTURE_VARIANT}")/ffmpegkit.framework"
-  initialize_folder "${FFMPEG_KIT_FRAMEWORK_PATH}"
-
-  if [[ ${ARCHITECTURE_VARIANT} -eq ${ARCH_VAR_MAC_CATALYST} ]] || [[ ${ARCHITECTURE_VARIANT} -eq ${ARCH_VAR_MACOS} ]]; then
-
-    # VERSIONED FRAMEWORK
-
-    local FFMPEG_KIT_FRAMEWORK_RESOURCE_PATH="${FFMPEG_KIT_FRAMEWORK_PATH}/Versions/A/Resources"
-
-    initialize_folder "${FFMPEG_KIT_FRAMEWORK_PATH}/Versions/A/Headers"
-    initialize_folder "${FFMPEG_KIT_FRAMEWORK_PATH}/Versions/A/Modules"
-    initialize_folder "${FFMPEG_KIT_FRAMEWORK_PATH}/Versions/A/Resources"
-
-    # LINK CURRENT VERSION
-    ln -s "A" "${FFMPEG_KIT_FRAMEWORK_PATH}/Versions/Current" 1>>"${BASEDIR}"/build.log 2>&1 || exit 1
-    ln -s "Versions/Current/Headers" "${FFMPEG_KIT_FRAMEWORK_PATH}/Headers" 1>>"${BASEDIR}"/build.log 2>&1 || exit 1
-    ln -s "Versions/Current/Modules" "${FFMPEG_KIT_FRAMEWORK_PATH}/Modules" 1>>"${BASEDIR}"/build.log 2>&1 || exit 1
-    ln -s "Versions/Current/Resources" "${FFMPEG_KIT_FRAMEWORK_PATH}/Resources" 1>>"${BASEDIR}"/build.log 2>&1 || exit 1
-    ln -s "Versions/Current/ffmpegkit" "${FFMPEG_KIT_FRAMEWORK_PATH}/ffmpegkit" 1>>"${BASEDIR}"/build.log 2>&1 || exit 1
-
-    # COPY HEADER FILES
-    cp -r "${FFMPEG_KIT_UNIVERSAL_LIBRARY_DIRECTORY}"/include/* "${FFMPEG_KIT_FRAMEWORK_PATH}/Versions/A/Headers" 1>>"${BASEDIR}"/build.log 2>&1 || exit 1
-
-    # COPY LIBRARY FILE
-    cp "${FFMPEG_KIT_UNIVERSAL_LIBRARY_DIRECTORY}/lib/libffmpegkit.dylib" "${FFMPEG_KIT_FRAMEWORK_PATH}/Versions/A/ffmpegkit" 1>>"${BASEDIR}"/build.log 2>&1 || exit 1
-
-  else
-
-    # DEFAULT FRAMEWORK
-
-    local FFMPEG_KIT_FRAMEWORK_RESOURCE_PATH="${FFMPEG_KIT_FRAMEWORK_PATH}"
-
-    initialize_folder "${FFMPEG_KIT_FRAMEWORK_PATH}/Headers"
-    initialize_folder "${FFMPEG_KIT_FRAMEWORK_PATH}/Modules"
-
-    # COPY HEADER FILES
-    cp -r "${FFMPEG_KIT_UNIVERSAL_LIBRARY_DIRECTORY}"/include/* "${FFMPEG_KIT_FRAMEWORK_PATH}"/Headers 1>>"${BASEDIR}"/build.log 2>&1 || exit 1
-
-    # COPY LIBRARY FILE
-    cp "${FFMPEG_KIT_UNIVERSAL_LIBRARY_DIRECTORY}/lib/libffmpegkit.dylib" "${FFMPEG_KIT_FRAMEWORK_PATH}"/ffmpegkit 1>>"${BASEDIR}"/build.log 2>&1 || exit 1
-
-  fi
-
-  # COPY FRAMEWORK LICENSES
-  if [[ "${GPL_ENABLED}" == "yes" ]]; then
-    cp "${BASEDIR}"/tools/license/LICENSE.GPLv3 "${FFMPEG_KIT_FRAMEWORK_RESOURCE_PATH}/LICENSE" 1>>"${BASEDIR}"/build.log 2>&1 || exit 1
-  else
-    cp "${BASEDIR}"/LICENSE "${FFMPEG_KIT_FRAMEWORK_RESOURCE_PATH}/LICENSE" 1>>"${BASEDIR}"/build.log 2>&1 || exit 1
-  fi
-
-  cp "${BASEDIR}/tools/source/SOURCE" "${FFMPEG_KIT_FRAMEWORK_RESOURCE_PATH}/SOURCE" 1>>"${BASEDIR}"/build.log 2>&1 || exit 1
-
-  # COPYING STRIP SCRIPT FOR SHARED LIBRARY
-  cp ${BASEDIR}/tools/apple/strip-frameworks.sh ${FFMPEG_KIT_FRAMEWORK_RESOURCE_PATH} 1>>${BASEDIR}/build.log 2>&1 || exit 1
-
-  build_info_plist "${FFMPEG_KIT_FRAMEWORK_RESOURCE_PATH}/Info.plist" "ffmpegkit" "com.ffmpegkit.FFmpegKit" "${FFMPEG_KIT_VERSION}" "${FFMPEG_KIT_VERSION}" "${ARCHITECTURE_VARIANT}"
-  build_modulemap "${FFMPEG_KIT_FRAMEWORK_PATH}/Modules/module.modulemap"
-
-  echo -e "DEBUG: ffmpeg-kit framework built for $(get_apple_architecture_variant "${ARCHITECTURE_VARIANT}") platform successfully\n" 1>>"${BASEDIR}"/build.log 2>&1
-}
-
 create_ffmpeg_xcframework() {
   for FFMPEG_LIB in "${FFMPEG_LIBS[@]}"; do
 
@@ -583,41 +446,6 @@ create_ffmpeg_xcframework() {
 
     echo -e "DEBUG: xcframework for ${FFMPEG_LIB} built successfully\n" 1>>"${BASEDIR}"/build.log 2>&1
   done
-}
-
-create_ffmpeg_kit_xcframework() {
-  local FRAMEWORK_NAME="ffmpegkit"
-
-  # INITIALIZE FRAMEWORK DIRECTORY
-  local XCFRAMEWORK_PATH=${BASEDIR}/prebuilt/$(get_xcframework_directory)/${FRAMEWORK_NAME}.xcframework
-
-  initialize_folder "${XCFRAMEWORK_PATH}"
-  local BUILD_COMMAND="xcodebuild -create-xcframework "
-
-  for ARCHITECTURE_VARIANT in "${ARCHITECTURE_VARIANT_ARRAY[@]}"; do
-    if [[ $(is_apple_architecture_variant_supported "${ARCHITECTURE_VARIANT}") -eq 1 ]]; then
-      local FRAMEWORK_PATH=${BASEDIR}/prebuilt/$(get_framework_directory "${ARCHITECTURE_VARIANT}")/${FRAMEWORK_NAME}.framework
-      BUILD_COMMAND+=" -framework ${FRAMEWORK_PATH}"
-    fi
-  done
-
-  BUILD_COMMAND+=" -output ${XCFRAMEWORK_PATH}"
-
-  # EXECUTE CREATE FRAMEWORK COMMAND
-  COMMAND_OUTPUT=$(${BUILD_COMMAND} 2>&1)
-  RC=$?
-  echo -e "DEBUG: ${COMMAND_OUTPUT}\n" 1>>"${BASEDIR}"/build.log 2>&1
-
-  if [[ ${RC} -ne 0 ]]; then
-    exit_xcframework "${FRAMEWORK_NAME}"
-  fi
-
-  # DO NOT ALLOW EMPTY FRAMEWORKS
-  if [[ ${COMMAND_OUTPUT} == *"is empty in library"* ]]; then
-    exit_xcframework "${FRAMEWORK_NAME}"
-  fi
-
-  echo -e "DEBUG: xcframework for ffmpeg-kit built successfully\n" 1>>"${BASEDIR}"/build.log 2>&1
 }
 
 #

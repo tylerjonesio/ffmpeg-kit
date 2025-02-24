@@ -493,8 +493,6 @@ create_universal_libraries_for_tvos_default_frameworks() {
 
   create_ffmpeg_universal_library "${ARCH_VAR_TVOS}"
 
-  create_ffmpeg_kit_universal_library "${ARCH_VAR_TVOS}"
-
   echo -e "INFO: Universal libraries for default frameworks built successfully\n" 1>>"${BASEDIR}"/build.log 2>&1
 }
 
@@ -502,8 +500,6 @@ create_tvos_default_frameworks() {
   echo -e "INFO: Building default frameworks\n" 1>>"${BASEDIR}"/build.log 2>&1
 
   create_ffmpeg_framework "${ARCH_VAR_TVOS}"
-
-  create_ffmpeg_kit_framework "${ARCH_VAR_TVOS}"
 
   echo -e "INFO: Default frameworks built successfully\n" 1>>"${BASEDIR}"/build.log 2>&1
 }
@@ -514,9 +510,6 @@ create_universal_libraries_for_tvos_xcframeworks() {
   create_ffmpeg_universal_library "${ARCH_VAR_APPLETVOS}"
   create_ffmpeg_universal_library "${ARCH_VAR_APPLETVSIMULATOR}"
 
-  create_ffmpeg_kit_universal_library "${ARCH_VAR_APPLETVOS}"
-  create_ffmpeg_kit_universal_library "${ARCH_VAR_APPLETVSIMULATOR}"
-
   echo -e "INFO: Universal libraries for xcframeworks built successfully\n" 1>>"${BASEDIR}"/build.log 2>&1
 }
 
@@ -526,9 +519,6 @@ create_frameworks_for_tvos_xcframeworks() {
   create_ffmpeg_framework "${ARCH_VAR_APPLETVOS}"
   create_ffmpeg_framework "${ARCH_VAR_APPLETVSIMULATOR}"
 
-  create_ffmpeg_kit_framework "${ARCH_VAR_APPLETVOS}"
-  create_ffmpeg_kit_framework "${ARCH_VAR_APPLETVSIMULATOR}"
-
   echo -e "INFO: Frameworks for xcframeworks built successfully\n" 1>>"${BASEDIR}"/build.log 2>&1
 }
 
@@ -537,8 +527,6 @@ create_tvos_xcframeworks() {
   echo -e "INFO: Building xcframeworks\n" 1>>"${BASEDIR}"/build.log 2>&1
 
   create_ffmpeg_xcframework
-
-  create_ffmpeg_kit_xcframework
 
   echo -e "INFO: xcframeworks built successfully\n" 1>>"${BASEDIR}"/build.log 2>&1
 }
