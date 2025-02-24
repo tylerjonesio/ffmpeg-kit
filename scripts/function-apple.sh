@@ -5,13 +5,7 @@ source "${BASEDIR}/scripts/function.sh"
 export FFMPEG_LIBS=("libavcodec" "libavdevice" "libavfilter" "libavformat" "libavutil" "libswresample" "libswscale")
 
 get_ffmpeg_kit_version() {
-  local FFMPEG_KIT_VERSION=$(grep 'const FFmpegKitVersion' "${BASEDIR}"/apple/src/FFmpegKitConfig.m | grep -Eo '\".*\"' | sed -e 's/\"//g')
-
-  if [[ -z ${FFMPEG_KIT_LTS_BUILD} ]]; then
-    echo "${FFMPEG_KIT_VERSION}"
-  else
-    echo "${FFMPEG_KIT_VERSION}.LTS"
-  fi
+  echo "5.1.2"
 }
 
 get_external_library_version() {
