@@ -85,10 +85,10 @@ get_common_cflags() {
 
   case ${ARCH} in
   arm64)
-    echo "-fstrict-aliasing ${BITCODE_FLAGS} -DTVOS ${LTS_BUILD_FLAG}${BUILD_DATE} -isysroot ${SDK_PATH}"
+    echo "-fstrict-aliasing ${BITCODE_FLAGS} -DTVOS ${LTS_BUILD_FLAG}${BUILD_DATE} -Wno-incompatible-function-pointer-types -isysroot ${SDK_PATH}"
     ;;
   x86-64 | arm64-simulator)
-    echo "-fstrict-aliasing -DTVOS ${LTS_BUILD_FLAG}${BUILD_DATE} -isysroot ${SDK_PATH}"
+    echo "-fstrict-aliasing -DTVOS ${LTS_BUILD_FLAG}${BUILD_DATE} -Wno-incompatible-function-pointer-types -isysroot ${SDK_PATH}"
     ;;
   esac
 }
@@ -181,6 +181,12 @@ get_app_specific_cflags() {
   ffmpeg)
     APP_FLAGS="-Wno-unused-function -Wno-deprecated-declarations"
     ;;
+  ffmpeg-kit)
+    APP_FLAGS="-std=c99 -Wno-unused-function -Wall -Wno-deprecated-declarations -Wno-pointer-sign -Wno-switch -Wno-unused-result -Wno-unused-variable -DPIC -fobjc-arc"
+    ;;
+  gnutls)
+    APP_FLAGS="-std=c99 -Wno-unused-function -D_GL_USE_STDLIB_ALLOC=1"
+    ;;
   jpeg)
     APP_FLAGS="-Wno-nullability-completeness"
     ;;
@@ -193,8 +199,8 @@ get_app_specific_cflags() {
   libwebp | xvidcore)
     APP_FLAGS="-fno-common -DPIC"
     ;;
-  ffmpeg-kit)
-    APP_FLAGS="-std=c99 -Wno-unused-function -Wall -Wno-deprecated-declarations -Wno-pointer-sign -Wno-switch -Wno-unused-result -Wno-unused-variable -DPIC -fobjc-arc"
+  openh264 | x265)
+    APP_FLAGS="-Wno-unused-function"
     ;;
   sdl)
     APP_FLAGS="-DPIC -Wno-unused-function -D__TVOS__"
@@ -204,9 +210,6 @@ get_app_specific_cflags() {
     ;;
   soxr | snappy)
     APP_FLAGS="-std=gnu99 -Wno-unused-function -DPIC"
-    ;;
-  openh264 | x265)
-    APP_FLAGS="-Wno-unused-function"
     ;;
   *)
     APP_FLAGS="-std=c99 -Wno-unused-function"
@@ -264,26 +267,29 @@ get_cxxflags() {
   esac
 
   case $1 in
-  x265)
-    echo "-std=c++11 -fno-exceptions ${BITCODE_FLAGS} ${COMMON_CFLAGS}"
-    ;;
   gnutls)
     echo "-std=c++11 -fno-rtti ${BITCODE_FLAGS} ${COMMON_CFLAGS} ${OPTIMIZATION_FLAGS}"
     ;;
-  libwebp | xvidcore)
-    echo "-std=c++11 -fno-exceptions -fno-rtti ${BITCODE_FLAGS} -fno-common -DPIC ${COMMON_CFLAGS} ${OPTIMIZATION_FLAGS}"
-    ;;
   libaom)
     echo "-std=c++11 -fno-exceptions ${BITCODE_FLAGS} ${COMMON_CFLAGS} ${OPTIMIZATION_FLAGS}"
+    ;;
+  libilbc)
+    echo "-std=c++14 -fno-exceptions ${BITCODE_FLAGS} ${COMMON_CFLAGS} ${OPTIMIZATION_FLAGS}"
+    ;;
+  libwebp | xvidcore)
+    echo "-std=c++11 -fno-exceptions -fno-rtti ${BITCODE_FLAGS} -fno-common -DPIC ${COMMON_CFLAGS} ${OPTIMIZATION_FLAGS}"
     ;;
   opencore-amr)
     echo "-fno-rtti ${BITCODE_FLAGS} ${COMMON_CFLAGS} ${OPTIMIZATION_FLAGS}"
     ;;
   rubberband)
-    echo "-fno-rtti ${BITCODE_FLAGS} ${COMMON_CFLAGS} ${OPTIMIZATION_FLAGS}"
+    echo "-fno-rtti -Wno-c++11-narrowing ${BITCODE_FLAGS} ${COMMON_CFLAGS} ${OPTIMIZATION_FLAGS}"
     ;;
-  srt | zimg)
+  srt | tesseract | zimg)
     echo "-std=c++11 ${BITCODE_FLAGS} ${COMMON_CFLAGS} ${OPTIMIZATION_FLAGS}"
+    ;;
+  x265)
+    echo "-std=c++11 -fno-exceptions ${BITCODE_FLAGS} ${COMMON_CFLAGS}"
     ;;
   *)
     echo "-std=c++11 -fno-exceptions -fno-rtti ${BITCODE_FLAGS} ${COMMON_CFLAGS} ${OPTIMIZATION_FLAGS}"
@@ -401,7 +407,7 @@ set_toolchain_paths() {
   LOCAL_ASMFLAGS="$(get_asmflags "$1")"
   case ${ARCH} in
   arm64*)
-    if [ "$1" == "x265" ]; then
+    if [ "$1" == "x265" ] || [ "$1" == "libilbc" ]; then
       export AS="${LOCAL_GAS_PREPROCESSOR}"
       export AS_ARGUMENTS="-arch aarch64"
       export ASM_FLAGS="${LOCAL_ASMFLAGS}"
