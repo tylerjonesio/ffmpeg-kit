@@ -236,13 +236,4 @@ else
   echo -e "\nffmpeg: skipped"
 fi
 
-# SKIP TO SPEED UP THE BUILD
-if [[ ${SKIP_ffmpeg_kit} -ne 1 ]]; then
-
-  # BUILD FFMPEG KIT
-  . "${BASEDIR}"/scripts/apple/ffmpeg-kit.sh "$@" || return 1
-else
-  echo -e "\nffmpeg-kit: skipped"
-fi
-
 echo -e "\nINFO: Completed build for ${ARCH} at $(date)\n" 1>>"${BASEDIR}"/build.log 2>&1
